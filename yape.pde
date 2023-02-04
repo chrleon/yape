@@ -10,7 +10,8 @@ Button btn_paint = new Button();
 
 
 void setup() {
-  size(1366, 768);
+  size(700, 400);
+  surface.setResizable(true);
   UIInit();
 }
 
@@ -21,12 +22,18 @@ void draw() {
 
 
 void UIInit() {
-  tools.setInt("width", 50);
+  tools.setInt("width", 48);
   canvas.setInt("width", 256);
   canvas.setInt("height", 256);
   ui.setJSONObject(0, tools);
 };
 
+void debugInfo(String msg, int x, int y) {
+  push();
+  fill(255, 0, 0);
+  text(msg, x, y);
+  pop();
+}
 
 void UI() {
   background(200);
@@ -41,27 +48,49 @@ class Button {
   // ex: float color;
   // get variables from outside by calling object.variablename
   // or set variables from outside by calling object.variablename = foo;
-  color bg = color(200, 200, 200, 10); // background
-  color fg = color(100, 100, 100, 100); // foreground / icon
+  color bg;
+  color fg;
+  int x;
+  int y;
+  int w;
+  int h;
 
   Button() {
     // constructor
     // set up the variables with data
     // also load any datafiles (esp. for Processing) that you'll work with
+    bg = color(200, 200, 200, 0); // background
+    fg = color(100, 100, 100, 100); // foreground / icon
+    x = 0;
+    y = 0;
+    w = 48;
+    h = 48;
   }
 
   void show() {
     push();
-    rectMode(CENTER);
     ellipseMode(CENTER);
     fill(this.bg);
-    rect(0, 0, 48, 48);
+    rect(this.x, this.y, 48, 48);
     fill(this.fg);
-    ellipse(0, 0, 20, 20);
+    ellipse(this.w/2, this.h/2, 36, 36);
     pop();
   }
 
   void hover() {
+    debugInfo(str(screenX(this.x, this.y)), 10, 10);
+    if (
+      mouseX > screenX(this.x, this.y)
+      && mouseX < screenX(this.x + this.w, this.y + this.h)
+      && mouseY > screenY(this.x, this.y)
+      && mouseY < screenY(this.x + this.w, this.y + this.h)
+      ) {
+      bg = color(100, 100, 100, 100);
+      fg = color(200, 200, 200, 100);
+    } else {
+      bg = color(200, 200, 200, 100);
+      fg = color(100, 100, 100, 100);
+    }
   }
 }
 
@@ -74,6 +103,7 @@ void Toolbar(String pos) {
   noStroke();
   rect(0, 0, tools.getInt("width"), height);
   btn_paint.show();
+  btn_paint.hover();
   pop();
 }
 
